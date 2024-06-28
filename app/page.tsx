@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { setToken } from "@/redux/auth/auth.slice";
+import { setToken, setUser } from "@/redux/auth/auth.slice";
 import useAuthSession from "../hooks/useAuthSession";
 import { useAppDispatch } from "@/redux/store";
-import { delay } from "../helpers/delay";
-import { loginSchema, validate } from "@/helpers/zod";
+import { validate } from "@/helpers/zod";
+import { login } from "@/helpers/auth";
+import toast from "react-hot-toast";
+import { delay } from "@/helpers/delay";
 
 export type ErrorState = {
   username?: string;
@@ -15,7 +17,7 @@ export type ErrorState = {
 /*
   Comments in the code showing 
   the previous way of handling form Validtion before using toast 
-*/ 
+*/
 
 const HomePage = () => {
   const [username, setUsername] = useState("");
@@ -33,7 +35,17 @@ const HomePage = () => {
     );
     if (!data) return;
     setLoading(true);
-    await delay(2000);
+
+    try {
+      await delay(600); // To Simulate a network request
+      const token = await login(data);
+      toast.success("Login successful");
+      dispatch(setToken(token));
+      dispatch(setUser({ username }));
+      localStorage.setItem("token", token);
+    } catch (error) {
+      toast.error((error as Error).message);
+    }
     // setError(null);
     setLoading(false);
   };

@@ -1,18 +1,41 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { setToken } from '@/redux/auth/auth.slice';
-import useAuthSession from '../hooks/useAuthSession';
-import { useAppDispatch } from '@/redux/store';
+import { useState } from "react";
+import { setToken } from "@/redux/auth/auth.slice";
+import useAuthSession from "../hooks/useAuthSession";
+import { useAppDispatch } from "@/redux/store";
+import { delay } from "../helpers/delay";
+import { loginSchema, validate } from "@/helpers/zod";
+
+export type ErrorState = {
+  username?: string;
+  password?: string;
+};
+
+/*
+  Comments in the code showing 
+  the previous way of handling form Validtion before using toast 
+*/ 
 
 const HomePage = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  // const [error, setError] = useState<ErrorState | null>(null);
   const dispatch = useAppDispatch();
   const user = useAuthSession();
 
-  const handleLogin = async () => {
-    // Implement the logic to authenticate the user
+  const handleLogin = async (event: any) => {
+    event.preventDefault();
+    const data = await validate(
+      { username, password }
+      // setError
+    );
+    if (!data) return;
+    setLoading(true);
+    await delay(2000);
+    // setError(null);
+    setLoading(false);
   };
 
   return (
@@ -23,7 +46,7 @@ const HomePage = () => {
             <h2 className="text-xl font-bold">Welcome, {user.username}</h2>
           </div>
         ) : (
-          <div>
+          <form>
             <h2 className="text-2xl font-bold text-center">Login</h2>
             <input
               type="text"
@@ -32,6 +55,11 @@ const HomePage = () => {
               placeholder="Username"
               className="w-full px-4 py-2 mt-4 border rounded-md"
             />
+
+            {/* {error?.username ? (
+              <p className="text-red-600 font-bold">{error.username}</p>
+            ) : null} */}
+
             <input
               type="password"
               value={password}
@@ -39,16 +67,24 @@ const HomePage = () => {
               placeholder="Password"
               className="w-full px-4 py-2 mt-4 border rounded-md"
             />
+
+            {/* {error?.password ? (
+              <p className="text-red-600 font-bold">{error.password}</p>
+            ) : null} */}
+
             <button
               onClick={handleLogin}
               className="w-full px-4 py-2 mt-6 font-bold text-white bg-blue-500 rounded-md"
+              type="submit"
             >
-              Login
+              {!loading ? "Login" : "Logging in"}
             </button>
-          </div>
+          </form>
         )}
         <div className="mt-6 p-4 border rounded-md text-black bg-gray-50">
-          <h3 className="text-lg font-semibold">The hook should be usable like this: </h3>
+          <h3 className="text-lg font-semibold">
+            The hook should be usable like this:{" "}
+          </h3>
           <pre className="mt-2 p-2 text-gray-500 bg-gray-100 rounded-md">
             <code>
               {`const { user } = useAuthSession();

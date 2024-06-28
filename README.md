@@ -1,5 +1,21 @@
 # TMD: FullStack Intern Assignment
 
+## I have Finished The task
+
+[Live Demo](https://fullstack-intern-assignment-exbr.vercel.app/)
+
+I have done the task with the Bonuses.
+
+i have used jwt auth as specified
+
+
+also i have added the token to the Local Storage to ensure that the user doesn't logout after reloading the page,
+
+made a middleware for authorization
+and added zod for validation on front-end and back-end
+
+The task took me around 1-2 Hours to be done
+
 ## Overview
 
 This assignment involves setting up a simple username/password authentication system using Redux for state management and Next.js for the front-end and back-end. You will create API endpoints with bearer token authentication and implement a custom `useAuthSession` hook to manage the user's session on the client side.

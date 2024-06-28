@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { setToken, setUser } from "@/redux/auth/auth.slice";
+import { clearAuth, setToken, setUser } from "@/redux/auth/auth.slice";
 import useAuthSession from "../hooks/useAuthSession";
 import { useAppDispatch } from "@/redux/store";
 import { validate } from "@/helpers/zod";
@@ -50,12 +50,23 @@ const HomePage = () => {
     setLoading(false);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    dispatch(clearAuth());
+  };
+
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100">
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
         {user ? (
           <div>
             <h2 className="text-xl font-bold">Welcome, {user.username}</h2>
+            <button
+              onClick={() => handleLogout()}
+              className="w-full px-4 py-2 mt-6 font-bold text-white bg-blue-500 rounded-md"
+            >
+              Logout
+            </button>
           </div>
         ) : (
           <form>
